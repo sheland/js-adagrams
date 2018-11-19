@@ -1,4 +1,4 @@
-const Adagrams = {
+const Adagrams = {        //similar to Ruby module
   letters: {
     "A" : 9,
     "B": 2,
@@ -28,7 +28,7 @@ const Adagrams = {
     "Z": 1,
   },
 
-  randomKeys() {
+  drawLetters() {
     const result = []
     for (let i = 0; i < 10; i++) {
       const keys = Object.keys(Adagrams.letters);
@@ -39,44 +39,110 @@ const Adagrams = {
           delete Adagrams.letters[curr]
         }
     }
-    console.log('this is all that is left in the hash of letters:',Adagrams.letters);
+    // console.log('this is all that is left in the hash of letters:',Adagrams.letters);
 
-      return result;
-    }
-  }
+    return result;
+  },
 
 // console.log(Adagrams.randomKeys());
 
+  usesAvailableLetters(word, drawn) {
+    let input_array = word.toUpperCase().split('');
+    let letters_hand = drawn;
+    // let tru_false = [];
 
-  usesAvailableLetters(input, letters_in_hand) {
-    const input = input.split('');
-    const letters_in_hand = Adagrams.randomKeys();
-    const tru_fals = [];
-
-    for (let input_each of input) {
-      if (letters_in_hand.includes(input_each)) {
-        tru_false.push(input_each)
+    for (let letter of input_array) {
+      if (letters_hand.includes(letter)) { //if hand includes player's word
+        letters_hand.splice(letters_hand.indexOf(letter), + 1); //remove letter by index position
       } else {
-        tru_false.push("false");
+        return false
       }
     }
-    if (tru_fals.includes("false")) {
-      return false
-    } else {
-      return true
+    return true;
+    //
+    // if (tru_false.includes(false)) {
+    //   return false
+    // } else {
+    //   return true
+    // }
+  },
+
+  scoreWord(word) {
+    let scoreHash = {
+      "A": 1, "E": 1, "I": 1, "O": 1, "U": 1, "L": 1, "N": 1, "R": 1, "S": 1, "T": 1,
+      "D": 2, "G": 2,
+      "B": 3, "C": 3, "M": 3, "P": 3,
+      "F": 4, "H": 4, "V": 4, "W": 4, "Y": 4,
+      "K": 5,
+      "J": 8, "X": 8,
+      "Q": 10, "Z": 10};
+
+    let words = word.toUpperCase().split('');
+    let scores = words.map(function (char) { //array
+      return scoreHash[char];
+    });
+
+    let totalScore = scores.reduce(function (sum, score) { //add score
+      return sum + score;
+      }, 0);
+
+    if (word.length > 6 ) { //if length is > 6, add additional points
+      totalScore += 8;
     }
-  }
+
+    return totalScore;
+  },
+
+  highestScoreFrom(words) {
+    let bestWord = 'adagramswavefour';
+    let bestScore = 0;
 
 
-  // drawLetters(letters) {
-  //   let letters = `${"A".repeat(9) + "B".repeat(2) + "C".repeat(2) + "D".repeat(4) + "E".repeat(12) + "F".repeat(2) + "G".repeat(3) + "H".repeat(2) + "D".repeat(4) + "E".repeat(12) + "F".repeat(2) + "G".repeat(3) + "H".repeat(2) + "I".repeat(9) + "J".repeat(1) + "K".repeat(1) + "L".repeat(4) + "M".repeat(2) + "N".repeat(6) + "O".repeat(8) + "P".repeat(2) + "Q".repeat(1) + "R".repeat(6) + "S".repeat(4) + "T".repeat(6) + "U".repeat(4) + "V".repeat(2) + "W".repeat(2) + "Y".repeat(2) + "Z".repeat(1)`.split('');
-//
-// for(let i = 0; i < 10; i++) {
-//     console.log(letters[Math.floor(Math.random())])
-//   }
-// },
+      for(const word of words) {
+        const wordScore = this.scoreWord(word); //obtain points from scoreWord method
+
+        if (wordScore > bestScore) {
+          bestScore = wordScore;
+          bestWord = word;
+      } else if (wordScore == bestScore && bestWord.length != word.length) { //if same points & different length
+          if (word.length == 10 || (word.length < bestWord.length && bestWord.length != 10)) { //if length is 10 OR length less than bestword's length AND its length is not 10
+          bestScore = wordScore;
+          bestWord = word;
+        }
+      }
+    }
+      return {
+       word: bestWord,
+       score: bestScore
+    }
+   }
 
 
+};
+
+// console.log(Adagrams.usesAvailableLetters());
+
+
+  // usesAvailableLetters(input, letters_in_hand) {
+  // //
+  //   const letters = input.split('');
+  //   const letters_in_hand = Adagrams.randomKeys();
+  //   const tru_fals = [];
+  //
+  //   for (let letter of letters) {
+  //     if (letters_in_hand.includes(letter)) {
+  //       tru_false.push(letter) && delete letters_in_hand[letter]
+  //     } else {
+  //       tru_false.push("false");
+  //     }
+  //   }
+  //
+  //   if (tru_fals.includes("false")) {
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // },
 
 // Do not remove this line or your tests will break!
-// export default Adagrams;
+export default Adagrams;
